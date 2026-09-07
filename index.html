@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +7,6 @@
   <title>Bibliothèque de connaissances</title>
 
   <style>
-
     * {
       box-sizing: border-box;
     }
@@ -17,437 +15,664 @@
       margin: 0;
       font-family: Arial, sans-serif;
       background: #f5f7fa;
-      color: #202124;
+      color: #20242a;
     }
 
     header {
-      background: white;
-      border-bottom: 1px solid #ddd;
-      padding: 28px 20px;
+      background: #ffffff;
+      border-bottom: 1px solid #e1e5e9;
+      padding: 30px 20px;
       text-align: center;
     }
 
     header h1 {
-      margin: 0 0 8px;
+      margin: 0 0 10px;
       font-size: 30px;
     }
 
     header p {
       margin: 0;
-      color: #666;
+      color: #68717d;
     }
 
     main {
-      max-width: 900px;
-      margin: 30px auto;
-      padding: 0 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 30px 20px;
     }
 
     .search-box {
-      background: white;
+      background: #ffffff;
       padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      border-radius: 14px;
+      border: 1px solid #e1e5e9;
       margin-bottom: 25px;
     }
 
     .search-box input {
       width: 100%;
-      padding: 14px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+      padding: 15px;
+      border: 1px solid #ccd2d8;
+      border-radius: 10px;
       font-size: 16px;
       outline: none;
     }
 
     .search-box input:focus {
-      border-color: #555;
+      border-color: #6b7280;
     }
 
     .status {
-      margin-bottom: 20px;
-      color: #666;
+      margin-top: 12px;
       font-size: 14px;
+      color: #68717d;
     }
 
-    .results {
+    .message {
+      background: #ffffff;
+      border: 1px solid #e1e5e9;
+      border-radius: 14px;
+      padding: 25px;
+      text-align: center;
+      color: #68717d;
+    }
+
+    .articles {
       display: grid;
-      gap: 15px;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 18px;
     }
 
     .article-card {
       display: block;
-      background: white;
+      background: #ffffff;
+      border: 1px solid #e1e5e9;
+      border-radius: 14px;
       padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       text-decoration: none;
       color: inherit;
-      transition: transform 0.15s ease;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
     .article-card:hover {
       transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.07);
     }
 
     .article-card h2 {
-      margin: 0 0 8px;
+      margin: 0 0 10px;
+      font-size: 21px;
     }
 
     .keywords {
-      color: #666;
       font-size: 14px;
+      color: #68717d;
+      line-height: 1.5;
     }
 
-    .no-result {
-      background: white;
-      padding: 25px;
-      border-radius: 12px;
-      text-align: center;
-      color: #777;
+    .count {
+      margin-bottom: 18px;
+      font-size: 15px;
+      color: #555e69;
     }
 
-    .error {
-      background: #fff4f4;
-      border: 1px solid #e0b4b4;
-      color: #8a3333;
-      padding: 18px;
-      border-radius: 10px;
+    .hidden {
+      display: none !important;
     }
 
     footer {
       text-align: center;
-      padding: 30px;
-      color: #777;
+      padding: 30px 20px;
+      color: #7a838d;
       font-size: 13px;
     }
 
-  </style>
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 25px;
+      }
 
+      main {
+        padding: 20px 15px;
+      }
+
+      .articles {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-  <header>
+<header>
+  <h1>Bibliothèque de connaissances</h1>
+  <p>Une bibliothèque publique de connaissances pour le synthétiseur</p>
+</header>
 
-    <h1>Bibliothèque de connaissances</h1>
+<main>
 
-    <p>
-      Base de connaissances publique du synthétiseur
-    </p>
+  <section class="search-box">
 
-  </header>
+    <input
+      type="search"
+      id="search"
+      placeholder="Rechercher une connaissance..."
+      autocomplete="off"
+    >
 
-
-  <main>
-
-    <div class="search-box">
-
-      <input
-        type="text"
-        id="search"
-        placeholder="Rechercher un mot ou un concept..."
-        autocomplete="off"
-      >
-
+    <div class="status" id="status">
+      Détection des connaissances...
     </div>
 
+  </section>
 
-    <div id="status" class="status">
-      Chargement de la bibliothèque...
-    </div>
+  <div class="count" id="count">
+    Chargement...
+  </div>
 
+  <section id="articles" class="articles"></section>
 
-    <div id="results" class="results"></div>
+  <div id="message" class="message hidden"></div>
 
-  </main>
+</main>
 
-
-  <footer>
-
-    Bibliothèque de connaissances
-
-  </footer>
-
-
-  <script>
-
-    /*
-      ============================================
-      CONFIGURATION
-      ============================================
-    */
-
-    const INDEX_URL = "./articles/index.json";
+<footer>
+  Bibliothèque de connaissances — système statique GitHub Pages
+</footer>
 
 
-    /*
-      ============================================
-      VARIABLES
-      ============================================
-    */
+<script>
 
-    let connaissances = [];
-
-
-    const searchInput =
-      document.getElementById("search");
-
-    const results =
-      document.getElementById("results");
-
-    const status =
-      document.getElementById("status");
+  /*
+   * ============================================================
+   * BIBLIOTHÈQUE AUTOMATIQUE
+   * ============================================================
+   *
+   * Cette page détecte automatiquement les fichiers HTML
+   * présents dans le dossier /articles/ du dépôt GitHub.
+   *
+   * Tu n'as donc plus besoin de modifier index.json.
+   */
 
 
-    /*
-      ============================================
-      CHARGEMENT DE L'INDEX
-      ============================================
-    */
-
-    async function chargerBibliotheque() {
-
-      try {
-
-        const response =
-          await fetch(INDEX_URL);
-
-        if (!response.ok) {
-
-          throw new Error(
-            "Impossible de charger l'index."
-          );
-
-        }
+  const articlesContainer = document.getElementById("articles");
+  const message = document.getElementById("message");
+  const searchInput = document.getElementById("search");
+  const countElement = document.getElementById("count");
+  const statusElement = document.getElementById("status");
 
 
-        const index =
-          await response.json();
+  let articles = [];
 
 
-        connaissances =
-          Object.entries(index).map(
-            ([cle, article]) => {
+  /*
+   * ------------------------------------------------------------
+   * Trouver automatiquement le propriétaire et le dépôt
+   * ------------------------------------------------------------
+   *
+   * Exemple :
+   *
+   * https://gondofo.github.io/ma-bibliotheque/
+   *
+   * devient :
+   *
+   * propriétaire = gondofo
+   * dépôt = ma-bibliotheque
+   */
 
-              return {
+  function getRepositoryInfo() {
 
-                cle: cle,
+    const hostname = window.location.hostname;
+    const pathname = window.location.pathname;
 
-                fichier: article.article,
-
-                motsCles:
-                  article.motsCles || []
-
-              };
-
-            }
-          );
-
-
-        status.textContent =
-          connaissances.length +
-          " connaissance(s) disponible(s).";
-
-
-        afficherResultats(
-          connaissances
-        );
-
-
-      } catch (erreur) {
-
-        console.error(erreur);
-
-        status.textContent = "";
-
-        results.innerHTML = `
-
-          <div class="error">
-
-            Impossible de charger la bibliothèque.
-
-            Vérifie que
-            <strong>articles/index.json</strong>
-            existe bien.
-
-          </div>
-
-        `;
-
-      }
-
+    if (!hostname.endsWith(".github.io")) {
+      throw new Error(
+        "Cette bibliothèque doit être utilisée depuis GitHub Pages."
+      );
     }
 
+    const owner = hostname.split(".")[0];
 
-    /*
-      ============================================
-      AFFICHAGE
-      ============================================
-    */
+    const parts = pathname
+      .split("/")
+      .filter(Boolean);
 
-    function afficherResultats(liste) {
-
-      results.innerHTML = "";
-
-
-      if (liste.length === 0) {
-
-        results.innerHTML = `
-
-          <div class="no-result">
-
-            Aucune connaissance disponible.
-
-          </div>
-
-        `;
-
-        return;
-
-      }
-
-
-      liste.forEach(article => {
-
-        const lien =
-          document.createElement("a");
-
-
-        lien.className =
-          "article-card";
-
-
-        lien.href =
-          "./articles/" +
-          article.fichier;
-
-
-        lien.innerHTML = `
-
-          <h2>
-            ${premiereLettreMajuscule(article.cle)}
-          </h2>
-
-          <div class="keywords">
-
-            Mots-clés :
-            ${article.motsCles.join(", ")}
-
-          </div>
-
-        `;
-
-
-        results.appendChild(lien);
-
-      });
-
+    if (parts.length === 0) {
+      throw new Error(
+        "Impossible de déterminer le nom du dépôt GitHub."
+      );
     }
 
+    const repository = parts[0];
 
-    /*
-      ============================================
-      RECHERCHE PAR MOT-CLÉ
-      ============================================
-    */
-
-    function rechercher(texte) {
-
-      const recherche =
-        normaliser(texte);
+    return {
+      owner,
+      repository
+    };
+  }
 
 
-      if (!recherche) {
+  /*
+   * ------------------------------------------------------------
+   * Nettoyage du texte
+   * ------------------------------------------------------------
+   */
 
-        afficherResultats(
-          connaissances
-        );
+  function normalize(text) {
 
-        return;
+    return String(text || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim();
 
-      }
-
-
-      const resultats =
-        connaissances.filter(article => {
-
-          const texteArticle = [
-
-            article.cle,
-
-            ...article.motsCles
-
-          ]
-          .join(" ");
+  }
 
 
-          return normaliser(
-            texteArticle
-          ).includes(recherche);
+  /*
+   * ------------------------------------------------------------
+   * Transformer un nom de fichier en titre
+   * ------------------------------------------------------------
+   *
+   * chaise.html → Chaise
+   * grande-maison.html → Grande maison
+   */
 
-        });
+  function titleFromFilename(filename) {
+
+    return filename
+      .replace(/\.html$/i, "")
+      .replace(/[-_]+/g, " ")
+      .replace(/\b\w/g, letter => letter.toUpperCase());
+
+  }
 
 
-      afficherResultats(
-        resultats
+  /*
+   * ------------------------------------------------------------
+   * Récupérer les fichiers du dossier articles/
+   * ------------------------------------------------------------
+   */
+
+  async function detectArticles() {
+
+    const {
+      owner,
+      repository
+    } = getRepositoryInfo();
+
+
+    const apiUrl =
+      `https://api.github.com/repos/${owner}/${repository}/contents/articles/`;
+
+
+    statusElement.textContent =
+      "Recherche des articles dans la bibliothèque...";
+
+
+    const response = await fetch(apiUrl, {
+      headers: {
+        "Accept": "application/vnd.github+json"
+      },
+      cache: "no-store"
+    });
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        `GitHub n'a pas pu fournir la liste des articles.`
       );
 
     }
 
 
-    /*
-      ============================================
-      NORMALISATION
-      ============================================
-    */
-
-    function normaliser(texte) {
-
-      return String(texte)
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
-
-    }
-
-
-    function premiereLettreMajuscule(texte) {
-
-      return texte.charAt(0).toUpperCase()
-        + texte.slice(1);
-
-    }
+    const files = await response.json();
 
 
     /*
-      ============================================
-      RECHERCHE EN DIRECT
-      ============================================
-    */
+     * On garde uniquement les fichiers HTML.
+     *
+     * index.json est automatiquement ignoré.
+     */
 
-    searchInput.addEventListener(
-      "input",
-      () => {
+    const htmlFiles = files.filter(file => {
 
-        rechercher(
-          searchInput.value
-        );
+      return (
+        file.type === "file" &&
+        /\.html$/i.test(file.name)
+      );
 
-      }
+    });
+
+
+    statusElement.textContent =
+      `${htmlFiles.length} article(s) détecté(s).`;
+
+
+    /*
+     * Pour chaque article, on récupère son contenu afin
+     * de lire :
+     *
+     * data-concept
+     * data-keywords
+     *
+     */
+
+    const results = await Promise.all(
+
+      htmlFiles.map(async file => {
+
+        const article = {
+
+          filename: file.name,
+
+          url: `./articles/${encodeURIComponent(file.name)}`,
+
+          title: titleFromFilename(file.name),
+
+          keywords: []
+
+        };
+
+
+        try {
+
+          const articleResponse = await fetch(
+            file.download_url,
+            {
+              cache: "no-store"
+            }
+          );
+
+
+          if (articleResponse.ok) {
+
+            const html =
+              await articleResponse.text();
+
+
+            const parser =
+              new DOMParser();
+
+
+            const documentArticle =
+              parser.parseFromString(
+                html,
+                "text/html"
+              );
+
+
+            const element =
+              documentArticle.querySelector(
+                "[data-concept]"
+              );
+
+
+            if (element) {
+
+              const concept =
+                element.getAttribute(
+                  "data-concept"
+                );
+
+
+              const keywords =
+                element.getAttribute(
+                  "data-keywords"
+                );
+
+
+              if (concept) {
+
+                article.title = concept;
+
+              }
+
+
+              if (keywords) {
+
+                article.keywords =
+                  keywords
+                    .split(",")
+                    .map(word => word.trim())
+                    .filter(Boolean);
+
+              }
+
+            }
+
+          }
+
+        } catch (error) {
+
+          /*
+           * Si un article ne peut pas être lu,
+           * on garde quand même son fichier.
+           */
+
+          console.warn(
+            "Impossible de lire les métadonnées :",
+            file.name
+          );
+
+        }
+
+
+        return article;
+
+      })
+
     );
 
 
-    /*
-      ============================================
-      DÉMARRAGE
-      ============================================
-    */
+    return results;
 
-    chargerBibliotheque();
+  }
 
-  </script>
+
+  /*
+   * ------------------------------------------------------------
+   * Afficher les articles
+   * ------------------------------------------------------------
+   */
+
+  function renderArticles(list) {
+
+    articlesContainer.innerHTML = "";
+
+
+    if (list.length === 0) {
+
+      message.textContent =
+        "Aucune connaissance ne correspond à votre recherche.";
+
+      message.classList.remove("hidden");
+
+      countElement.textContent =
+        "0 connaissance";
+
+      return;
+
+    }
+
+
+    message.classList.add("hidden");
+
+
+    countElement.textContent =
+      `${list.length} connaissance${list.length > 1 ? "s" : ""}`;
+
+
+    list.forEach(article => {
+
+      const card =
+        document.createElement("a");
+
+
+      card.className =
+        "article-card";
+
+
+      card.href =
+        article.url;
+
+
+      const title =
+        document.createElement("h2");
+
+
+      title.textContent =
+        article.title;
+
+
+      card.appendChild(title);
+
+
+      if (article.keywords.length > 0) {
+
+        const keywords =
+          document.createElement("div");
+
+
+        keywords.className =
+          "keywords";
+
+
+        keywords.textContent =
+          article.keywords.join(" • ");
+
+
+        card.appendChild(keywords);
+
+      }
+
+
+      articlesContainer.appendChild(card);
+
+    });
+
+  }
+
+
+  /*
+   * ------------------------------------------------------------
+   * Recherche
+   * ------------------------------------------------------------
+   */
+
+  function searchArticles() {
+
+    const query =
+      normalize(searchInput.value);
+
+
+    if (!query) {
+
+      renderArticles(articles);
+
+      return;
+
+    }
+
+
+    const results =
+      articles.filter(article => {
+
+        const title =
+          normalize(article.title);
+
+
+        const filename =
+          normalize(article.filename);
+
+
+        const keywords =
+          article.keywords
+            .map(normalize)
+            .join(" ");
+
+
+        return (
+          title.includes(query) ||
+          filename.includes(query) ||
+          keywords.includes(query)
+        );
+
+      });
+
+
+    renderArticles(results);
+
+  }
+
+
+  searchInput.addEventListener(
+    "input",
+    searchArticles
+  );
+
+
+  /*
+   * ------------------------------------------------------------
+   * Initialisation
+   * ------------------------------------------------------------
+   */
+
+  async function startLibrary() {
+
+    try {
+
+      articles =
+        await detectArticles();
+
+
+      /*
+       * Tri alphabétique
+       */
+
+      articles.sort((a, b) =>
+        a.title.localeCompare(
+          b.title,
+          "fr"
+        )
+      );
+
+
+      renderArticles(articles);
+
+
+      statusElement.textContent =
+        "Bibliothèque synchronisée avec les articles publics.";
+
+    } catch (error) {
+
+      console.error(error);
+
+
+      statusElement.textContent =
+        "Erreur lors de la détection.";
+
+
+      countElement.textContent =
+        "Impossible de charger les connaissances.";
+
+
+      message.textContent =
+        "La bibliothèque n'a pas réussi à récupérer les articles. Vérifie que le dépôt est public et que GitHub Pages fonctionne correctement.";
+
+
+      message.classList.remove("hidden");
+
+    }
+
+  }
+
+
+  startLibrary();
+
+</script>
 
 </body>
-
 </html>
