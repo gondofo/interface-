@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
   <title>Bibliothèque de connaissances</title>
 
   <style>
+
     * {
       box-sizing: border-box;
     }
@@ -21,13 +23,13 @@
     header {
       background: white;
       border-bottom: 1px solid #ddd;
-      padding: 25px 20px;
+      padding: 28px 20px;
       text-align: center;
     }
 
     header h1 {
       margin: 0 0 8px;
-      font-size: 28px;
+      font-size: 30px;
     }
 
     header p {
@@ -62,31 +64,39 @@
       border-color: #555;
     }
 
+    .status {
+      margin-bottom: 20px;
+      color: #666;
+      font-size: 14px;
+    }
+
     .results {
       display: grid;
       gap: 15px;
     }
 
     .article-card {
+      display: block;
       background: white;
-      border-radius: 12px;
       padding: 20px;
+      border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.15s ease;
+    }
+
+    .article-card:hover {
+      transform: translateY(-2px);
     }
 
     .article-card h2 {
-      margin-top: 0;
-      margin-bottom: 8px;
+      margin: 0 0 8px;
     }
 
     .keywords {
       color: #666;
       font-size: 14px;
-      margin-bottom: 15px;
-    }
-
-    .definition {
-      line-height: 1.6;
     }
 
     .no-result {
@@ -97,184 +107,239 @@
       color: #777;
     }
 
+    .error {
+      background: #fff4f4;
+      border: 1px solid #e0b4b4;
+      color: #8a3333;
+      padding: 18px;
+      border-radius: 10px;
+    }
+
     footer {
       text-align: center;
       padding: 30px;
       color: #777;
       font-size: 13px;
     }
+
   </style>
+
 </head>
 
 <body>
 
   <header>
+
     <h1>Bibliothèque de connaissances</h1>
-    <p>Une base de connaissances publique pour le synthétiseur</p>
+
+    <p>
+      Base de connaissances publique du synthétiseur
+    </p>
+
   </header>
+
 
   <main>
 
     <div class="search-box">
+
       <input
         type="text"
         id="search"
-        placeholder="Rechercher un mot ou une connaissance..."
+        placeholder="Rechercher un mot ou un concept..."
         autocomplete="off"
       >
+
     </div>
+
+
+    <div id="status" class="status">
+      Chargement de la bibliothèque...
+    </div>
+
 
     <div id="results" class="results"></div>
 
   </main>
 
+
   <footer>
-    Bibliothèque de connaissances — Projet personnel
+
+    Bibliothèque de connaissances
+
   </footer>
+
 
   <script>
 
     /*
-      ==========================================
-      BASE DE CONNAISSANCES
-      ==========================================
-
-      Pour l'instant, les articles sont ici.
-
-      Plus tard, nous allons déplacer chaque
-      article dans son propre fichier afin que
-      le synthétiseur puisse récupérer seulement
-      ce dont il a besoin.
+      ============================================
+      CONFIGURATION
+      ============================================
     */
 
-    const connaissances = [
-
-      {
-        titre: "Bonjour",
-
-        motsCles: [
-          "bonjour",
-          "salutation",
-          "saluer",
-          "salut"
-        ],
-
-        definition:
-          "Bonjour est une formule utilisée pour saluer une personne, généralement lors d'une rencontre ou au début d'une conversation.",
-
-        explication:
-          "Le mot bonjour sert principalement à établir un contact avec une autre personne. Il peut être utilisé dans un contexte courant ou formel.",
-
-        exemples: [
-          "Bonjour, comment vas-tu ?",
-          "Bonjour monsieur.",
-          "Je lui ai dit bonjour en arrivant."
-        ],
-
-        relations: [
-          "saluer",
-          "salutation",
-          "salut",
-          "bonsoir"
-        ]
-      },
-
-      {
-        titre: "Chaise",
-
-        motsCles: [
-          "chaise",
-          "siège",
-          "meuble",
-          "mobilier",
-          "s'asseoir"
-        ],
-
-        definition:
-          "Une chaise est un meuble conçu principalement pour permettre à une personne de s'asseoir.",
-
-        explication:
-          "Une chaise possède généralement une assise et un dossier. Elle peut être fabriquée avec différents matériaux et être utilisée dans de nombreux environnements.",
-
-        exemples: [
-          "Je me suis assis sur une chaise.",
-          "La chaise est près de la table.",
-          "Il déplace la chaise."
-        ],
-
-        relations: [
-          "siège",
-          "table",
-          "meuble",
-          "s'asseoir"
-        ]
-      }
-
-    ];
+    const INDEX_URL = "./articles/index.json";
 
 
     /*
-      ==========================================
-      AFFICHAGE
-      ==========================================
+      ============================================
+      VARIABLES
+      ============================================
     */
 
-    const searchInput = document.getElementById("search");
-    const results = document.getElementById("results");
+    let connaissances = [];
 
 
-    function afficherArticles(liste) {
+    const searchInput =
+      document.getElementById("search");
+
+    const results =
+      document.getElementById("results");
+
+    const status =
+      document.getElementById("status");
+
+
+    /*
+      ============================================
+      CHARGEMENT DE L'INDEX
+      ============================================
+    */
+
+    async function chargerBibliotheque() {
+
+      try {
+
+        const response =
+          await fetch(INDEX_URL);
+
+        if (!response.ok) {
+
+          throw new Error(
+            "Impossible de charger l'index."
+          );
+
+        }
+
+
+        const index =
+          await response.json();
+
+
+        connaissances =
+          Object.entries(index).map(
+            ([cle, article]) => {
+
+              return {
+
+                cle: cle,
+
+                fichier: article.article,
+
+                motsCles:
+                  article.motsCles || []
+
+              };
+
+            }
+          );
+
+
+        status.textContent =
+          connaissances.length +
+          " connaissance(s) disponible(s).";
+
+
+        afficherResultats(
+          connaissances
+        );
+
+
+      } catch (erreur) {
+
+        console.error(erreur);
+
+        status.textContent = "";
+
+        results.innerHTML = `
+
+          <div class="error">
+
+            Impossible de charger la bibliothèque.
+
+            Vérifie que
+            <strong>articles/index.json</strong>
+            existe bien.
+
+          </div>
+
+        `;
+
+      }
+
+    }
+
+
+    /*
+      ============================================
+      AFFICHAGE
+      ============================================
+    */
+
+    function afficherResultats(liste) {
 
       results.innerHTML = "";
+
 
       if (liste.length === 0) {
 
         results.innerHTML = `
+
           <div class="no-result">
-            Aucune connaissance trouvée.
+
+            Aucune connaissance disponible.
+
           </div>
+
         `;
 
         return;
+
       }
 
 
       liste.forEach(article => {
 
-        const card = document.createElement("article");
+        const lien =
+          document.createElement("a");
 
-        card.className = "article-card";
 
-        card.innerHTML = `
+        lien.className =
+          "article-card";
 
-          <h2>${article.titre}</h2>
+
+        lien.href =
+          "./articles/" +
+          article.fichier;
+
+
+        lien.innerHTML = `
+
+          <h2>
+            ${premiereLettreMajuscule(article.cle)}
+          </h2>
 
           <div class="keywords">
+
             Mots-clés :
             ${article.motsCles.join(", ")}
-          </div>
 
-          <div class="definition">
-            <strong>Définition</strong>
-            <p>${article.definition}</p>
-
-            <strong>Explication</strong>
-            <p>${article.explication}</p>
-
-            <strong>Exemples</strong>
-            <ul>
-              ${article.exemples
-                .map(exemple => `<li>${exemple}</li>`)
-                .join("")}
-            </ul>
-
-            <strong>Relations</strong>
-            <p>${article.relations.join(", ")}</p>
           </div>
 
         `;
 
-        results.appendChild(card);
+
+        results.appendChild(lien);
 
       });
 
@@ -282,60 +347,107 @@
 
 
     /*
-      ==========================================
-      RECHERCHE
-      ==========================================
+      ============================================
+      RECHERCHE PAR MOT-CLÉ
+      ============================================
     */
 
     function rechercher(texte) {
 
-      const recherche = texte
-        .toLowerCase()
-        .trim();
+      const recherche =
+        normaliser(texte);
+
 
       if (!recherche) {
 
-        afficherArticles(connaissances);
+        afficherResultats(
+          connaissances
+        );
 
         return;
+
       }
 
 
-      const resultat = connaissances.filter(article => {
+      const resultats =
+        connaissances.filter(article => {
 
-        const mots = article.motsCles
-          .join(" ")
-          .toLowerCase();
+          const texteArticle = [
 
-        const titre = article.titre
-          .toLowerCase();
+            article.cle,
 
-        return (
-          titre.includes(recherche) ||
-          mots.includes(recherche)
-        );
+            ...article.motsCles
 
-      });
+          ]
+          .join(" ");
 
 
-      afficherArticles(resultat);
+          return normaliser(
+            texteArticle
+          ).includes(recherche);
+
+        });
+
+
+      afficherResultats(
+        resultats
+      );
 
     }
 
 
+    /*
+      ============================================
+      NORMALISATION
+      ============================================
+    */
+
+    function normaliser(texte) {
+
+      return String(texte)
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+
+    }
+
+
+    function premiereLettreMajuscule(texte) {
+
+      return texte.charAt(0).toUpperCase()
+        + texte.slice(1);
+
+    }
+
+
+    /*
+      ============================================
+      RECHERCHE EN DIRECT
+      ============================================
+    */
+
     searchInput.addEventListener(
       "input",
-      () => rechercher(searchInput.value)
+      () => {
+
+        rechercher(
+          searchInput.value
+        );
+
+      }
     );
 
 
     /*
-      Affichage initial
+      ============================================
+      DÉMARRAGE
+      ============================================
     */
 
-    afficherArticles(connaissances);
+    chargerBibliotheque();
 
   </script>
 
 </body>
+
 </html>
