@@ -1,1 +1,341 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>Bibliothèque de connaissances</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      color: #202124;
+    }
+
+    header {
+      background: white;
+      border-bottom: 1px solid #ddd;
+      padding: 25px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    header p {
+      margin: 0;
+      color: #666;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .search-box {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      margin-bottom: 25px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .search-box input:focus {
+      border-color: #555;
+    }
+
+    .results {
+      display: grid;
+      gap: 15px;
+    }
+
+    .article-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .article-card h2 {
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+
+    .keywords {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+
+    .definition {
+      line-height: 1.6;
+    }
+
+    .no-result {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      text-align: center;
+      color: #777;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #777;
+      font-size: 13px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>Bibliothèque de connaissances</h1>
+    <p>Une base de connaissances publique pour le synthétiseur</p>
+  </header>
+
+  <main>
+
+    <div class="search-box">
+      <input
+        type="text"
+        id="search"
+        placeholder="Rechercher un mot ou une connaissance..."
+        autocomplete="off"
+      >
+    </div>
+
+    <div id="results" class="results"></div>
+
+  </main>
+
+  <footer>
+    Bibliothèque de connaissances — Projet personnel
+  </footer>
+
+  <script>
+
+    /*
+      ==========================================
+      BASE DE CONNAISSANCES
+      ==========================================
+
+      Pour l'instant, les articles sont ici.
+
+      Plus tard, nous allons déplacer chaque
+      article dans son propre fichier afin que
+      le synthétiseur puisse récupérer seulement
+      ce dont il a besoin.
+    */
+
+    const connaissances = [
+
+      {
+        titre: "Bonjour",
+
+        motsCles: [
+          "bonjour",
+          "salutation",
+          "saluer",
+          "salut"
+        ],
+
+        definition:
+          "Bonjour est une formule utilisée pour saluer une personne, généralement lors d'une rencontre ou au début d'une conversation.",
+
+        explication:
+          "Le mot bonjour sert principalement à établir un contact avec une autre personne. Il peut être utilisé dans un contexte courant ou formel.",
+
+        exemples: [
+          "Bonjour, comment vas-tu ?",
+          "Bonjour monsieur.",
+          "Je lui ai dit bonjour en arrivant."
+        ],
+
+        relations: [
+          "saluer",
+          "salutation",
+          "salut",
+          "bonsoir"
+        ]
+      },
+
+      {
+        titre: "Chaise",
+
+        motsCles: [
+          "chaise",
+          "siège",
+          "meuble",
+          "mobilier",
+          "s'asseoir"
+        ],
+
+        definition:
+          "Une chaise est un meuble conçu principalement pour permettre à une personne de s'asseoir.",
+
+        explication:
+          "Une chaise possède généralement une assise et un dossier. Elle peut être fabriquée avec différents matériaux et être utilisée dans de nombreux environnements.",
+
+        exemples: [
+          "Je me suis assis sur une chaise.",
+          "La chaise est près de la table.",
+          "Il déplace la chaise."
+        ],
+
+        relations: [
+          "siège",
+          "table",
+          "meuble",
+          "s'asseoir"
+        ]
+      }
+
+    ];
+
+
+    /*
+      ==========================================
+      AFFICHAGE
+      ==========================================
+    */
+
+    const searchInput = document.getElementById("search");
+    const results = document.getElementById("results");
+
+
+    function afficherArticles(liste) {
+
+      results.innerHTML = "";
+
+      if (liste.length === 0) {
+
+        results.innerHTML = `
+          <div class="no-result">
+            Aucune connaissance trouvée.
+          </div>
+        `;
+
+        return;
+      }
+
+
+      liste.forEach(article => {
+
+        const card = document.createElement("article");
+
+        card.className = "article-card";
+
+        card.innerHTML = `
+
+          <h2>${article.titre}</h2>
+
+          <div class="keywords">
+            Mots-clés :
+            ${article.motsCles.join(", ")}
+          </div>
+
+          <div class="definition">
+            <strong>Définition</strong>
+            <p>${article.definition}</p>
+
+            <strong>Explication</strong>
+            <p>${article.explication}</p>
+
+            <strong>Exemples</strong>
+            <ul>
+              ${article.exemples
+                .map(exemple => `<li>${exemple}</li>`)
+                .join("")}
+            </ul>
+
+            <strong>Relations</strong>
+            <p>${article.relations.join(", ")}</p>
+          </div>
+
+        `;
+
+        results.appendChild(card);
+
+      });
+
+    }
+
+
+    /*
+      ==========================================
+      RECHERCHE
+      ==========================================
+    */
+
+    function rechercher(texte) {
+
+      const recherche = texte
+        .toLowerCase()
+        .trim();
+
+      if (!recherche) {
+
+        afficherArticles(connaissances);
+
+        return;
+      }
+
+
+      const resultat = connaissances.filter(article => {
+
+        const mots = article.motsCles
+          .join(" ")
+          .toLowerCase();
+
+        const titre = article.titre
+          .toLowerCase();
+
+        return (
+          titre.includes(recherche) ||
+          mots.includes(recherche)
+        );
+
+      });
+
+
+      afficherArticles(resultat);
+
+    }
+
+
+    searchInput.addEventListener(
+      "input",
+      () => rechercher(searchInput.value)
+    );
+
+
+    /*
+      Affichage initial
+    */
+
+    afficherArticles(connaissances);
+
+  </script>
+
+</body>
+</html>
