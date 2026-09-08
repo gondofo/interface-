@@ -9,6 +9,7 @@
 
   <style>
     * {
+      box-init: border-box;
       box-sizing: border-box;
     }
 
@@ -82,18 +83,6 @@
       border-radius: 4px;
     }
 
-    .conjugation {
-      background: #f4f6f8;
-      padding: 15px;
-      border-radius: 8px;
-      font-family: monospace;
-      font-size: 14px;
-    }
-
-    .conjugation p {
-      margin: 4px 0;
-    }
-
     .relations span {
       display: inline-block;
       background: #eef0f2;
@@ -127,7 +116,7 @@
   <header>
     <div class="container">
       <h1>Bibliothèque de connaissances</h1>
-      <p>Article de connaissance structurée (Verbe)</p>
+      <p>Article de connaissance</p>
     </div>
   </header>
 
@@ -138,9 +127,7 @@
       <article
         class="article"
         data-concept="penser"
-        data-category="verbe_action_cognitive"
-        data-complexity="intermediaire"
-        data-keywords="penser,réfléchir,esprit,cognition,idée,verbe"
+        data-keywords="penser,pensée,pensant,pensé,réfléchir,cogiter,conceptualiser,raisonner"
       >
 
         <h2>Penser</h2>
@@ -151,7 +138,7 @@
           <h3>Mots-clés</h3>
 
           <div class="keywords">
-            penser, réfléchir, esprit, cognition, idée, verbe
+            penser, pensée, pensant, pensé, réfléchir, cogiter, conceptualiser, raisonner
           </div>
         </div>
 
@@ -163,9 +150,9 @@
           <h3>Définition</h3>
 
           <p>
-            [Étymologie : du latin pensare, peser, examiner]. Verbe du 1er groupe désignant 
-            l'activité mentale par laquelle l'esprit élabore des idées, exerce son jugement, 
-            raisonne ou prend conscience de la réalité.
+            Penser désigne l'activité cognitive fondamentale par laquelle l'esprit élabore 
+            des concepts, exerce son jugement, traite des informations ou génère des processus 
+            de raisonnement logique et sémantique.
           </p>
 
         </div>
@@ -178,31 +165,18 @@
           <h3>Explication</h3>
 
           <p>
-            En tant que verbe d'action cognitive, « penser » mobilise les processus internes 
-            de traitement de l'information. Il s'emploie aussi bien de manière transitive 
-            (avoir une opinion sur un sujet) qu'absolue ou intransitive.
+            Sur le plan morphologique et sémantique, le lemme <strong>penser</strong> englobe l'ensemble 
+            de ses formes fléchies et dérivées (les flexions verbales comme <em>pensant</em> ou <em>pensé</em>, 
+            ainsi que le substantif <em>pensée</em>). Dans le jargon de la cognition et du traitement du texte, 
+            il est étroitement lié à des termes de même sens ou de même champ lexical comme 
+            <strong>réfléchir</strong>, <strong>cogiter</strong> ou <strong>conceptualiser</strong>.
           </p>
 
           <p>
-            Il structure la logique conversationnelle et formelle, servant de pivot 
-            à l'expression de la certitude, du doute ou de la projection intellectuelle.
+            Pour un système ou un esprit, cela correspond à un traitement de données internes : 
+            évaluer des prémisses, croiser des matrices de connaissances et synthétiser 
+            une décision ou une sortie textuelle cohérente.
           </p>
-
-        </div>
-
-
-        <!-- CONJUGAISON ESSENTIELLE -->
-
-        <div class="section">
-
-          <h3>Conjugaison (Temps principaux)</h3>
-
-          <div class="conjugation">
-            <p><strong>Présent de l'indicatif :</strong> je pense, tu penses, il pense, nous pensons, vous pensez, ils pensent</p>
-            <p><strong>Imparfait :</strong> je pensais, tu pensais, il pensait, nous pensions, vous pensiez, ils pensaient</p>
-            <p><strong>Futur simple :</strong> je penserai, tu penseras, il pensera, nous penserons, vous penserez, ils penseront</p>
-            <p><strong>Passé composé :</strong> j'ai pensé, tu as pensé, il a pensé, nous avons pensé, vous avez pensé, ils ont pensé</p>
-          </div>
 
         </div>
 
@@ -214,15 +188,15 @@
           <h3>Exemples</h3>
 
           <div class="example">
-            [Action] Il aime penser à de nouveaux projets pour l'avenir.
+            Il a dû longuement cogiter et penser à sa stratégie pour résoudre cette équation complexe.
           </div>
 
           <div class="example">
-            [Opinion] Je pense que cette solution est la plus efficace.
+            Le modèle, tout en pensant à sa structure, commence à conceptualiser l'architecture avant de coder.
           </div>
 
           <div class="example">
-            [Réflexe] Il faut réfléchir avant d'agir et de penser trop vite.
+            Il est nécessaire de raisonner avec méthode et d'avoir une pensée rigoureuse pour éviter les biais.
           </div>
 
         </div>
@@ -236,12 +210,12 @@
 
           <div class="relations">
 
+            <span>pensée</span>
             <span>réfléchir</span>
-            <span>esprit</span>
-            <span>idée</span>
-            <span>raisonner</span>
-            <span>conscience</span>
             <span>cogiter</span>
+            <span>conceptualiser</span>
+            <span>raisonner</span>
+            <span>analyser</span>
 
           </div>
 
@@ -252,16 +226,13 @@
 
         <div
           class="machine-data"
-          data-type="structured_knowledge_node"
+          data-type="knowledge"
           data-language="fr"
-          data-schema-version="2.1"
           data-confidence="high"
-          data-parsing-weight="0.98"
         >
 
-          [SYNTAX_METADATA] Concept: penser | Type: verbe_1er_groupe | 
-          Structure: definition -> exegesis -> essential_conjugation -> multi_domain_examples -> semantic_graph -> system_payload. 
-          Optimisé pour l'induction morphologique et sémantique pour petits LLMs.
+          Cet article contient une définition, une explication intégrant le lemme et ses flexions,
+          des exemples contextuels avec du jargon, et un réseau de relations orienté vers l'inférence pour le concept « penser ».
 
         </div>
 
